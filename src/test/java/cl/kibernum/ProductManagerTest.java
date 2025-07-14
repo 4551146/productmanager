@@ -1,14 +1,113 @@
 package cl.kibernum;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.ParameterizedTest;
 
 public class ProductManagerTest {
-    private ProductManager productManager;
+    private ProductManager manager;
     
     @BeforeEach
     void setUp(){
-        productManager = new ProductManager();
+        manager = new ProductManager();
+    }
+
+    @Test
+    void agregarProducto_debeAgregaUnProducto(){
+        //Arange
+        String nombre = "Vitamina C";
+        String descripcion = "Vitamina C sabor naranja";
+        double precio = 4000;
+
+        //Act
+
+        manager.agregarProducto(nombre,descripcion,precio);
+
+        //Assert
+        assertFalse(manager.getMap().isEmpty(),"Sin productos");
+        assertEquals(1,manager.getMap().size());
+    }
+
+    @Test
+    void actualizarProducto_debeActualizarUnProducto(){
+         //Arange
+        String nombre = "Vitamina C";
+        String descripcion = "Vitamina C sabor naranja";
+        double precio = 4000;
+
+         //Act
+        manager.agregarProducto(nombre,descripcion,precio);
+        boolean actualizado = manager.actualizarProducto(1,"Coca-Cola","Bebida 2L Retornable", 1500);
+
+         //Assert
+        assertTrue(actualizado);
+    }
+
+    @Test
+    void borrarProducto_debeBorrarUnProducto(){
+        //Arange
+        String nombre = "Vitamina C";
+        String descripcion = "Vitamina C sabor naranja";
+        double precio = 4000;
+
+        //Act
+        manager.agregarProducto(nombre,descripcion,precio);
+        boolean borrado = manager.borrarProducto(1);
+
+        //Assert
+        assertTrue(borrado);
+    }
+
+
+
+    @Test
+    void validarNombre_nombreDebeSerValido(){
+        assertTrue(manager.validarNombre("Coca-Cola Zero"));//Nombre producto válido.
+        assertFalse(manager.validarNombre(null)); //Test con nombre null.
+        assertFalse(manager.validarNombre("")); //Test con nombre vacío.
+    }
+
+    @Test
+    void validarDescripcion_descripcionDebeSerValida(){
+        assertTrue(manager.validarDescripcion("Botellita cocalita zero"));//Descripción producto válida.
+        assertFalse(manager.validarDescripcion(null));//Test con descripción null.
+        assertFalse(manager.validarDescripcion(""));//Test con descripción vacía.
+    }
+
+    @Test
+    void validarPrecio_precioDebeSerPositivo(){
+        double precio = 1000;
+        
+        assertTrue(manager.validarPrecio(1000));//Es positivo
+
+        }
+
+
+        //Pruebas parametrizadas usando el método CsvSource.
+
+         @ParameterizedTest
+         @CsvSource({
+            "Vitamina C, Vitamina sabor naranja, 4000, true",
+            ", Bebida 2L Retornable, 1500, false",
+            "Trencito, Chocolate Trencito, -1400, false",
+            "W-40,,7800,false",
+         })
+         void testValidarProducto(String nombre, String descripcion, double precio, boolean esperado){
+            Producto producto = new Producto(nombre, descripcion, precio);
+            assertEquals(esperado, manager.validarProducto(producto));
+         }
+
+
+        //   @Test
+//   void testMayorDeEdad() {
+//     int edad = -20;
+//     assumeTrue(edad > 0, "La edad debe ser positiva"); // si no, el test se omite
+//     assertTrue(validadorUsuario.esMayorDeEdad(edad), "La edad debe ser mayor o igual a 18 años");
+
+    
 
         /* Métodos tradicionales con Junit 5 */
   
@@ -21,23 +120,7 @@ public class ProductManagerTest {
 //     assertNotNull(validadorUsuario);
 //   }
 
-//   /* Métodos de Hamcrest */
-//   @Test
-//   void testEmailValido() {
-//     // - El email debe tener formato válido (ejemplo: usuario@dominio.com).
-//     assertThat(validadorUsuario.esEmailValido("sofia@correo.com"), is(true)); // valido
-//     assertThat(validadorUsuario.esEmailValido("sofia @correo.com"), is(false)); // valido
-//     assertThat(validadorUsuario.esEmailValido("sofia@correo"), is(false)); // sin dominio (.cl, .org, .com)
-//     assertThat(validadorUsuario.esEmailValido("correo.com"), is(false)); // sin @
-//     assertThat(validadorUsuario.esEmailValido("10"), is(false)); 
-//     assertThat(validadorUsuario.esEmailValido("sofia@correo.com  algo"), is(false)); 
-//     assertThat(validadorUsuario.esEmailValido("sofia@correo.com.ar"), is(true)); 
-//     assertThat(validadorUsuario.esEmailValido("sofia@correo.comm"), is(true)); 
-//     assertThat(validadorUsuario.esEmailValido("sofia@correo@com.com"), is(false)); 
-//     assertThat(validadorUsuario.esEmailValido("@correo.cl"), is(false)); 
-//     assertThat(validadorUsuario.esEmailValido(".@com.cl"), is(true)); 
-//     assertThat(validadorUsuario.esEmailValido(null), is(false)); // Esperaria que retorne false para null
-//     // sofia@correo.comm o sofia@correo@com.com
+//  
 //   }
 
 //   // La edad debe ser mayor o igual a 18 años. (Junit 5)
@@ -46,19 +129,6 @@ public class ProductManagerTest {
 //     int edad = -20;
 //     assumeTrue(edad > 0, "La edad debe ser positiva"); // si no, el test se omite
 //     assertTrue(validadorUsuario.esMayorDeEdad(edad), "La edad debe ser mayor o igual a 18 años");
-//   }
-
-//   /* Prueba parametriza usando CsvSource: varios modelos y combinaciones */
-//   @ParameterizedTest
-//   @CsvSource({
-//     "Sofia, sofia@correo.com, 20, true",
-//     "Ana, ana@mail.com, 15, false",
-//     ", anonimo@correo.co, 22, false",
-//     "Richard, richard.stallman@correo, 30, false",
-//   })
-//   void testValidarUsuario(String nombre, String email, int edad, boolean esperado) {
-//     Usuario usuario = new Usuario(nombre, email, edad);
-//     assertEquals(esperado, validadorUsuario.validarUsuario(usuario));
 //   }
 
 //   /*Proveedor de usuarios validos */
@@ -86,5 +156,5 @@ public class ProductManagerTest {
 //     });
 
 //   } 
-    }
+    
 }
