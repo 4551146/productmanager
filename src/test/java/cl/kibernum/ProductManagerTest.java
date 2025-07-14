@@ -81,7 +81,7 @@ public class ProductManagerTest {
     void validarPrecio_precioDebeSerPositivo(){
         double precio = 1000;
         
-        assertTrue(manager.validarPrecio(1000));//Es positivo
+        assertTrue(manager.validarPrecio(precio));//Es positivo
 
         }
 
@@ -100,61 +100,5 @@ public class ProductManagerTest {
             assertEquals(esperado, manager.validarProducto(producto));
          }
 
-
-        //   @Test
-//   void testMayorDeEdad() {
-//     int edad = -20;
-//     assumeTrue(edad > 0, "La edad debe ser positiva"); // si no, el test se omite
-//     assertTrue(validadorUsuario.esMayorDeEdad(edad), "La edad debe ser mayor o igual a 18 años");
-
-    
-
-        /* Métodos tradicionales con Junit 5 */
-  
-//         @Test
-//   void testNombreValido() {
-//     assertTrue(validadorUsuario.esNombreValido("Sofia")); // Es un nombre válido
-//     assertFalse(validadorUsuario.esNombreValido("")); // vacio
-//     assertFalse(validadorUsuario.esNombreValido(null)); // null
-//     assertFalse(validadorUsuario.esNombreValido("A")); // nombre muy corto
-//     assertNotNull(validadorUsuario);
-//   }
-
-//  
-//   }
-
-//   // La edad debe ser mayor o igual a 18 años. (Junit 5)
-//   @Test
-//   void testMayorDeEdad() {
-//     int edad = -20;
-//     assumeTrue(edad > 0, "La edad debe ser positiva"); // si no, el test se omite
-//     assertTrue(validadorUsuario.esMayorDeEdad(edad), "La edad debe ser mayor o igual a 18 años");
-//   }
-
-//   /*Proveedor de usuarios validos */
-//   static Stream<Usuario> usuariosValidos() {
-//     return Stream.of(
-//       new Usuario("Sofia", "sofia@correo.com", 20),
-//       new Usuario("Richard", "richard@correo.com", 30));
-//   }
-
-//   @ParameterizedTest
-//   @MethodSource("usuariosValidos")
-//   void testUsuariosValidos(Usuario usuario) {
-//     assertThat(validadorUsuario.validarUsuario(usuario), is(true));
-//     assertThat(usuario.getNombre(), allOf(notNullValue(), not(blankString())));
-//     assertThat(usuario.getEmail(), containsString("@")); 
-//   }
-
-//   @Test
-//   void testValidarUsuarioAssumingThat() {
-//     Usuario usuario = new Usuario("Sofia", "sofia@correo.com", 10);
-//     // assertTrue(validadorUsuario.validarUsuario(usuario), "El usuario debe ser válido si es mayor de edad");
-//     assumingThat(validadorUsuario.esMayorDeEdad(usuario.getEdad()), () -> {
-//       System.out.println("Este mensaje solo aparece si es mayor de edad");
-//       assertTrue(validadorUsuario.validarUsuario(usuario), "El usuario debe ser válido si es mayor de edad");
-//     });
-
-//   } 
     
 }
