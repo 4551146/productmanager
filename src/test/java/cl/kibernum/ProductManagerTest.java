@@ -1,8 +1,13 @@
 package cl.kibernum;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,6 +18,12 @@ public class ProductManagerTest {
     @BeforeEach
     void setUp(){
         manager = new ProductManager();
+    }
+
+    @AfterEach
+    void cleanSetup(){
+        System.out.println("Limpiando Informacion");
+        manager = null;
     }
 
     @Test
@@ -29,6 +40,7 @@ public class ProductManagerTest {
         //Assert
         assertFalse(manager.getMap().isEmpty(),"Sin productos");
         assertEquals(1,manager.getMap().size());
+        assertThat(manager.getMap().isEmpty(), is(false));
     }
 
     @Test
@@ -52,11 +64,9 @@ public class ProductManagerTest {
         String nombre = "Vitamina C";
         String descripcion = "Vitamina C sabor naranja";
         double precio = 4000;
-
         //Act
         manager.agregarProducto(nombre,descripcion,precio);
         boolean borrado = manager.borrarProducto(1);
-
         //Assert
         assertTrue(borrado);
     }
@@ -80,25 +90,37 @@ public class ProductManagerTest {
     @Test
     void validarPrecio_precioDebeSerPositivo(){
         double precio = 1000;
-        
         assertTrue(manager.validarPrecio(precio));//Es positivo
-
-        }
+    }
 
 
         //Pruebas parametrizadas usando el método CsvSource.
 
-         @ParameterizedTest
-         @CsvSource({
-            "Vitamina C, Vitamina sabor naranja, 4000, true",
-            ", Bebida 2L Retornable, 1500, false",
-            "Trencito, Chocolate Trencito, -1400, false",
-            "W-40,,7800,false",
+    @ParameterizedTest
+    @CsvSource({
+        "Vitamina C, Vitamina sabor naranja, 4000, true",
+        ", Bebida 2L Retornable, 1500, false",
+        "Trencito, Chocolate Trencito, -1400, false",
+        "W-40,,7800,false",
          })
-         void testValidarProducto(String nombre, String descripcion, double precio, boolean esperado){
+    void testValidarProducto(String nombre, String descripcion, double precio, boolean esperado){
             Producto producto = new Producto(nombre, descripcion, precio);
             assertEquals(esperado, manager.validarProducto(producto));
-         }
+    }
 
-    
+
+
+    @ParameterizedTest
+    @CsvSource({
+        "Vitamina C, Vitamina sabor naranja, 4000, true",
+        ", Bebida 2L Retornable, 1500, false",
+        "Trencito, Chocolate Trencito, -1400, false",
+        "W-40,,7800,false",
+         })
+    void testAgregarProductoSoloSiEsValido(String nombre, String descripcion, double precio, boolean esperado) {
+        Producto producto = new Producto(nombre, descripcion, precio);
+        assumeTrue(manager.validarProducto(producto), "Producto no valido");
+        manager.agregarProducto(producto.getNombre(), producto.getDescripcion(), producto.getPrecio());
+        assertEquals(1, manager.getMap().size());
+    }
 }
